@@ -1,0 +1,111 @@
+{% extends "base2.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <h1>Dự đoán xu hướng chính trị của file</h1>
+    <br>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <hr>
+                <form action="{{ url_for('statistic') }}" method="POST" enctype="multipart/form-data">
+                    {#                    <input type="file" name="file">#}
+                    {#                    <input type="submit" name="Upload">#}
+                    <div class="form-group">
+                        <label style="color:blue;font-size:25px;">Chọn file</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" name="file_name" id="file">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload file</button>
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {#    <table class="table table-hover" style="text-align:left">#}
+    {#        <tr>#}
+    {#            <td>#}
+    {#                <b>Nhập file</b>#}
+    {##}
+    {#            </td>#}
+    {#            <td>#}
+    {#                <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data">#}
+    {#                    <input type="file" name="file">#}
+    {#                    <input type="submit" name="Upload">#}
+    {#                </form>#}
+    {#            </td>#}
+    {#        </tr>#}
+    {#    </table>#}
+
+
+
+
+    <div class="container" style="text-align:center">
+        <button type="submit" class="btn btn-primary">Xử lý</button>
+        <br>
+    </div>
+
+    <table class="table table-hover">
+        <tr>
+            <td>
+                <b>Kết quả xử lý</b>
+            </td>
+            <td>
+                <a>output_orm_article_200603.txt</a>
+            </td>
+        </tr>
+    </table>
+
+    <br>
+    <b>> Thống kê</b>
+
+
+    <table class="table table-hover">
+        <tr>
+            <td>
+                Phân phối trên từng nhánh theo số lượng post
+                <img src="/static/logo.png" width="80" height="80">
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Phân phối trên từng nhánh theo số lượng user
+                <img src="/static/logo.png" width="80" height="80">
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Thống kê theo số lượng truy cập
+                <img src="/static/logo.png" width="80" height="80">
+            </td>
+        </tr>
+        <tr>
+
+        </tr>
+        <td>
+            <b>Thống kê theo từng user</b>
+        </td>
+        <tr>
+
+            <td>
+                Nhập id user
+                <textarea placeholder="Nhập id"></textarea>
+                <button>Tìm kiếm và xử lý</button>
+
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align:center">
+                <img src="/static/logo.png" width="80" height="80">
+            </td>
+        </tr>
+    </table>
+
+{% endblock %}

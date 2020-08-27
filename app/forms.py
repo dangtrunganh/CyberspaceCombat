@@ -1,6 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField
+from wtforms import SubmitField, TextAreaField
+
+
+class BeginForm(FlaskForm):
+    submit = SubmitField('Start')
 
 
 class HomeForm(FlaskForm):
-    submit = SubmitField('Start')
+    content = TextAreaField('Nhập nội dung')
+    # submit = SubmitField('Predict')
+
+

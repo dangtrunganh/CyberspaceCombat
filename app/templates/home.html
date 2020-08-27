@@ -4,6 +4,43 @@
 {% block app_content %}
     <h1>Dự đoán xu hướng chính trị của bài viết</h1>
     <br>
-    <b>Nhập nội dung</b>
+
+    <p><b>Nhập nội dung</b></p>
+    <div class="container-fluid">
+        <div class="row" style="display: flex;">
+            <div class="col-md-5" style="padding-left: 0">
+                <textarea id="text-content"></textarea>
+            </div>
+            <div class="col-md-2" id="predict-btn">
+                <button type="submit" class="btn btn-primary">Dự đoán</button>
+            </div>
+            <div class="col-md-5" style="padding-right: 0" id="result">
+                {% if result.category %}
+                    <div>
+                        <b>Nhánh phân loại: </b>{{ result.category }}
+                    </div>
+                {% endif %}
+                {% if result.prob %}
+                    <div>
+                        <b>Xác suất: </b>{{ result.prob }}
+                    </div>
+
+                {% endif %}
+                {% if result.content_clean %}
+                    <div>
+                    <b>Nội dung clean: </b>{{ result.content_clean }}
+                    </div>
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <br>
+    <b> Xác suất các nhánh</b>
+    <br>
+    <br>
+    <div class="container" style="text-align:center">
+        <img src="/static/logo.png" width="200" height="200">
+    </div>
 
 {% endblock %}
