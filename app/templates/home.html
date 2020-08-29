@@ -9,29 +9,20 @@
     <div class="container-fluid">
         <div class="row" style="display: flex;">
             <div class="col-md-5" style="padding-left: 0">
-                <textarea id="text-content"></textarea>
+                <textarea id="text-content" name="content_raw" required></textarea>
             </div>
             <div class="col-md-2" id="predict-btn">
-                <button type="submit" class="btn btn-primary">Dự đoán</button>
+                <button type="submit" class="btn btn-primary" id="btn-predict">Dự đoán</button>
             </div>
             <div class="col-md-5" style="padding-right: 0" id="result">
-                {% if result.category %}
-                    <div>
-                        <b>Nhánh phân loại: </b>{{ result.category }}
-                    </div>
-                {% endif %}
-                {% if result.prob %}
-                    <div>
-                        <b>Xác suất: </b>{{ result.prob }}
-                    </div>
+                <div>
+                    <span id="content-clean"></span>
+                </div>
+                <br>
 
-                {% endif %}
-                {% if result.content_clean %}
-                    <div>
-                    <b>Nội dung clean: </b>{{ result.content_clean }}
-                    </div>
+                <div id="predict-result">
 
-                {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -39,8 +30,13 @@
     <b> Xác suất các nhánh</b>
     <br>
     <br>
-    <div class="container" style="text-align:center">
-        <img src="/static/logo.png" width="200" height="200">
+    <div class="container" style="text-align:center" id="image-result">
+{#        <img src="/static/output_chart/2020-08-29 06:54:35.691053.png" width="480" height="360">#}
     </div>
 
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script type="text/javascript" src="/static/js/home.js"></script>
 {% endblock %}

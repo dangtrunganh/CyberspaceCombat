@@ -1,0 +1,5 @@
+{
+  "model_classify": "politic_model_train.pkl",
+  "model_vectorizer": "politic_vectorizer_train.pkl"
+}
+
