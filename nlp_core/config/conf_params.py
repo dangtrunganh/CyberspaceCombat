@@ -51,3 +51,11 @@ def get_path_fig_single_predict(filename):
 
 def get_path_dir_fig_single_name(foldername):
     return os.path.join(current_dir, os.pardir, os.pardir, 'app', 'static', 'output_chart')
+
+def get_path_saved_folder():
+    return os.path.join(current_dir, os.pardir, os.pardir, 'app', 'static', 'upload_file')
+
+def get_path_saved_result_file(path_input_file):
+    file_input_name = os.path.basename(path_input_file)
+    file_output_name = 'output_predict_' + file_input_name
+    return os.path.join(current_dir, os.pardir, os.pardir, 'app', 'static', 'output_result', file_output_name)

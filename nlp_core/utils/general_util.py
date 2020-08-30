@@ -83,5 +83,5 @@ def draw_pie_chart_single_predict(dict_result, filename):
         labels.append(key)
         probs.append(value)
     plt.pie(probs, labels=labels)
-    remove_all_files_folder(os)
+    # remove_all_files_folder(os)
     plt.savefig(get_path_fig_single_predict(filename))

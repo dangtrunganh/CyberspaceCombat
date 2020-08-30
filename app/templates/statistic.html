@@ -18,7 +18,7 @@
                             <input type="file" class="custom-file-input" name="file_name" id="file">
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Upload file</button>
+                    <button type="submit" class="btn btn-primary" name="btn" value="btn-upload-file">Upload file</button>
                 </form>
 
             </div>
@@ -46,17 +46,23 @@
 
 
     <div class="container" style="text-align:center">
-        <button type="submit" class="btn btn-primary">Xử lý</button>
+        <form action="{{ url_for('statistic', path_main=path_file) }}" method="POST">
+            <button type="submit" class="btn btn-primary" name="btn" value="btn-process-file">Xử lý</button>
+        </form>
         <br>
     </div>
 
     <table class="table table-hover">
         <tr>
             <td>
-                <b>Kết quả xử lý</b>
+                {% if path_download %}
+                    <b>Kết quả xử lý</b>
+                {% endif %}
             </td>
             <td>
-                <a>output_orm_article_200603.txt</a>
+                {% if path_download %}
+                    <a href="{{ url_for('download_file', path=path_download) }}">{{ file_downloaded_name }}</a>
+                {% endif %}
             </td>
         </tr>
     </table>
