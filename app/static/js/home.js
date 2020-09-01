@@ -22,7 +22,7 @@ $(document).ready(function () {
 
                 // output_chart
                 var text_image = "<img src=\""
-                var path_image = "/static/output_chart/" + resp.image_name
+                var path_image = "/static/output_chart/image_single_predict/" + resp.image_name
                 console.log(path_image)
                 text_image += path_image + "\" width=\"480\" height=\"360\">"
                 console.log(text_image)

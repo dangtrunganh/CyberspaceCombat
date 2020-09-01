@@ -3,7 +3,6 @@
 
 {% block app_content %}
     <h1>Dự đoán xu hướng chính trị của bài viết</h1>
-    <br>
 
     <p><b>Nhập nội dung</b></p>
     <div class="container-fluid">
@@ -12,7 +11,9 @@
                 <textarea id="text-content" name="content_raw" required></textarea>
             </div>
             <div class="col-md-2" id="predict-btn">
-                <button type="submit" class="btn btn-primary" id="btn-predict">Dự đoán</button>
+                <button type="submit" class="btn btn-primary"
+                        id="btn-predict">Dự đoán
+                </button>
             </div>
             <div class="col-md-5" style="padding-right: 0" id="result">
                 <div>
@@ -31,7 +32,6 @@
     <br>
     <br>
     <div class="container" style="text-align:center" id="image-result">
-{#        <img src="/static/output_chart/2020-08-29 06:54:35.691053.png" width="480" height="360">#}
     </div>
 
 {% endblock %}

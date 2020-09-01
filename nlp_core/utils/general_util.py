@@ -5,7 +5,8 @@ import joblib
 import pickle
 import matplotlib.pyplot as plt
 import shutil
-from nlp_core.config.conf_params import get_path_fig_single_predict
+from matplotlib.ticker import MaxNLocator
+from nlp_core.config.conf_params import get_path_fig_output, get_path_dir_fig_single_name
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 
@@ -76,12 +77,128 @@ def remove_all_files_folder(path_folder):
 
 
 def draw_pie_chart_single_predict(dict_result, filename):
+    '''
+    :param dict_result:
+    :param filename:
+    :return: Chart in single predict - by category
+    '''
     # draw chart and save
+    remove_all_files_folder(get_path_dir_fig_single_name('image_single_predict'))
     labels = []
     probs = []
     for key, value in dict_result.items():
         labels.append(key)
         probs.append(value)
+
+    fig1, ax1 = plt.subplots()
+    ax1.pie(probs, labels=labels, autopct='%1.1f%%')
+    ax1.axis('equal')
+
+    plt.ylabel(None)
+    plt.xlabel(None)
     plt.pie(probs, labels=labels)
     # remove_all_files_folder(os)
-    plt.savefig(get_path_fig_single_predict(filename))
+    plt.savefig(get_path_fig_output('image_single_predict', filename))
+
+
+def draw_prob_number_posts(df_result, filename):
+    '''
+    :param df_result:
+    :param filename:
+    :return: Chart in files predict - by number of posts
+    '''
+    # draw chart and save
+    remove_all_files_folder(get_path_dir_fig_single_name('output_prob_post'))
+    labels = []
+    count_ = []
+    df_group = df_result.groupby(['category']).nunique().reset_index()
+    for row in df_group.itertuples():
+        labels.append(row.category)
+        count_.append(row.post_id)
+    # plt.figure()
+    fig1, ax1 = plt.subplots()
+    ax1.pie(count_, labels=labels, autopct='%1.1f%%')
+    ax1.axis('equal')
+
+    plt.ylabel(None)
+    plt.xlabel(None)
+    plt.pie(count_, labels=labels)
+    # remove_all_files_folder(os)
+    plt.savefig(get_path_fig_output('output_prob_post', filename))
+
+
+def draw_prob_number_users(df_result, filename):
+    '''
+    :param df_result:
+    :param filename:
+    :return: Chart in files predict - by number of posts
+    '''
+    # draw chart and save
+    remove_all_files_folder(get_path_dir_fig_single_name('output_prob_user'))
+    labels = []
+    count_ = []
+    df_group = df_result.groupby(['category']).nunique().reset_index()
+    for row in df_group.itertuples():
+        labels.append(row.category)
+        count_.append(row.author_id)
+
+    fig1, ax1 = plt.subplots()
+    ax1.pie(count_, labels=labels, autopct='%1.1f%%')
+    ax1.axis('equal')
+
+    plt.ylabel(None)
+    plt.xlabel(None)
+    plt.pie(count_, labels=labels)
+    # remove_all_files_folder(os)
+    plt.savefig(get_path_fig_output('output_prob_user', filename))
+
+
+def draw_prob_number_access(df_result, filename):
+    '''
+    :param df_result:
+    :param filename:
+    :return: Chart in files predict - by number of access
+    '''
+    # draw chart and save
+    remove_all_files_folder(get_path_dir_fig_single_name('output_prob_access'))
+    df_f = df_result.groupby(['author_id']).nunique().reset_index().groupby(['post_id']).nunique().reset_index()
+    df_f.rename(columns={'post_id': 'number_of_posts',
+                         'author_id': 'number_of_users'}, inplace=True)
+    labels = []
+    x_ = []
+    for row in df_f.itertuples():
+        labels.append(row.number_of_posts)
+        x_.append(row.number_of_users)
+    print(df_f.head())
+    print('----------------------')
+    print('labels = {}'.format(labels))
+    print('x_ = {}'.format(x_))
+    ax = plt.figure().gca()
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    plt.ylabel('number of posts')
+    plt.xlabel('number of users')
+    plt.grid(True)
+    plt.plot(labels, x_)
+    plt.savefig(get_path_fig_output('output_prob_access', filename))
+
+
+def draw_prob_each_user(df_result, filename):
+    remove_all_files_folder(get_path_dir_fig_single_name('output_prob_each_user'))
+    labels = []
+    count_ = []
+    df_group = df_result.groupby(['category']).nunique().reset_index()
+    for row in df_group.itertuples():
+        labels.append(row.category)
+        count_.append(row.post_id)
+    # plt.figure()
+    fig1, ax1 = plt.subplots()
+    ax1.pie(count_, labels=labels, autopct='%1.1f%%')
+    ax1.axis('equal')
+
+    plt.ylabel(None)
+    plt.xlabel(None)
+    plt.pie(count_, labels=labels)
+    # remove_all_files_folder(os)
+    print(os.path.abspath(get_path_fig_output('output_prob_each_user', filename)))
+    plt.savefig(get_path_fig_output('output_prob_each_user', filename))
