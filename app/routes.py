@@ -177,8 +177,9 @@ def statistic():
 #         f.save(secure_filename(f.filename))
 #         return 'file uploaded successfully'
 
-@app.route('/download_file')
-def download_file(path=None):
+@app.route('/download_file', methods=['GET'])
+def download_file():
+    path = request.args.get('path', None)
     if path is None:
         flash('path is None')
         redirect(url_for('statistic'))
@@ -186,9 +187,12 @@ def download_file(path=None):
         try:
             print('test:---' + path)
             return send_file(path, as_attachment=True)
-        except:
+        except Exception as e:
+            print(e)
             flash('error 404')
+            print('test error:---' + path)
             redirect(url_for(statistic))
+            raise e
 
 
 @app.route('/statistic_ajax', methods=['POST'])
