@@ -15,7 +15,7 @@ import csv
 from nlp_core.utils.general_util import draw_pie_chart_single_predict
 from app import app, pc
 
-ALLOWED_EXTENSIONS = set(['csv'])
+ALLOWED_EXTENSIONS = set(['csv', 'parquet'])
 
 
 def allowed_file(filename):
@@ -49,15 +49,20 @@ def home_ajax():
     data = flask.request.get_json()
     # get from ajax process 'statistic.js'
     content_raw = data['content_raw']
+    if content_raw == '':
+        flash('Please type something first')
+        content_clean = ''
+        result = {}
+        file_name = ''
+    else:
+        import time
+        time_start = time.time()
+        content_clean, result = pc.predict_single_post(content_raw)
+        print('time to process: {}'.format(time.time() - time_start))
+        file_name = 'image_single_predict_' + str(time.time()) + '.png'
+        draw_pie_chart_single_predict(result, file_name)
 
-    import time
-    time_start = time.time()
-    content_clean, result = pc.predict_single_post(content_raw)
-    print('time to process: {}'.format(time.time() - time_start))
-    file_name = 'image_single_predict_' + str(time.time()) + '.png'
-    draw_pie_chart_single_predict(result, file_name)
-
-    # result = {'category': 'Tham nhũng', 'prob': 0.96, 'content_clean': 'truong_hoc cua toi dag co nan tham_nhung'}
+        # result = {'category': 'Tham nhũng', 'prob': 0.96, 'content_clean': 'truong_hoc cua toi dag co nan tham_nhung'}
 
     return flask.jsonify({
         'content_clean': content_clean,
@@ -106,38 +111,69 @@ def statistic():
             print(filepath)
             # filepath = '/home/trunganh/TrungAnh/CyberspaceCombat/CyberspaceCombat/app/static/upload_file/test_data.csv'
             if filepath != 'undef':
-                df_raw = pd.read_csv(filepath, delimiter='|')
+                # df_raw = pd.read_csv(filepath, delimiter='|')
+                df_raw = pd.read_parquet(filepath).head(100)
                 print(df_raw.head(2))
 
                 print('Processing...')
                 index_ = 0
                 total_row = len(df_raw)
                 iter_ = total_row / 10000
-                if iter_ < 5:
-                    iter_ = 5
-                # test
-                iter_ = 1
+                # if iter_ < 5:
+                #     iter_ = 5
+                # # test
+                # iter_ = 1
                 PATH_DOWNLOADED = get_path_saved_result_file(filepath)
                 FILE_DOWNLOADED_NAME = os.path.basename(PATH_DOWNLOADED)
+
+                # ===================================
+                # with open(PATH_DOWNLOADED, 'w', encoding='utf-8') as f:
+                #     f_writer = csv.writer(f, delimiter='|')
+                #     f_writer.writerow(
+                #         ['author_id', 'post_id', 'content_clean', 'category', 'prob'])
+                #     for row in df_raw.itertuples():
+                #         index_ += 1
+                #         if index_ % iter_ == 0:
+                #             session.pop('_flashes', None)
+                #             flash('Processing... {}%'.format(index_ / total_row))
+                #         x_clean = _clean_text(row.content_raw)
+                #         x_np = _convert_ndarray_data(pc.vectorizer, x_clean)
+                #         x_predict = pc.model.predict(x_np).squeeze().tolist()
+                #         prob = pc.model.predict_proba(x_np)[0].tolist()
+                #         result = {get_label_by_IID(str(index)): prob[index] for index in range(0, len(x_predict)) if
+                #                   x_predict[index] == 1}
+                #         for k, v in result.items():
+                #             f_writer.writerow([row.author_id, row.post_id, x_clean, k, v])
+                # ===================================
+                # content_clean, result = pc.predict_single_post(content_raw)
+                # new approach
+                star_time = time.time()
                 with open(PATH_DOWNLOADED, 'w', encoding='utf-8') as f:
                     f_writer = csv.writer(f, delimiter='|')
                     f_writer.writerow(
-                        ['author_id', 'post_id', 'content_clean', 'category', 'prob'])
+                        ['author_id', 'post_id', 'reply_id', 'comment_id', 'article_type', 'clean_content', 'category',
+                         'prob', 'published_time', 'id'])
                     for row in df_raw.itertuples():
                         index_ += 1
                         if index_ % iter_ == 0:
                             session.pop('_flashes', None)
                             flash('Processing... {}%'.format(index_ / total_row))
-                        x_clean = _clean_text(row.content_raw)
-                        x_np = _convert_ndarray_data(pc.vectorizer, x_clean)
-                        x_predict = pc.model.predict(x_np).squeeze().tolist()
-                        prob = pc.model.predict_proba(x_np)[0].tolist()
-                        result = {get_label_by_IID(str(index)): prob[index] for index in range(0, len(x_predict)) if
-                                  x_predict[index] == 1}
+                        x_clean, result = pc.predict_single_post(row.content)
+                        # x_clean = _clean_text(row.content_raw)
+                        # x_np = _convert_ndarray_data(pc.vectorizer, x_clean)
+                        # x_predict = pc.model.predict(x_np).squeeze().tolist()
+                        # prob = pc.model.predict_proba(x_np)[0].tolist()
+                        # result = {get_label_by_IID(str(index)): prob[index] for index in range(0, len(x_predict)) if
+                        #           x_predict[index] == 1}
                         for k, v in result.items():
-                            f_writer.writerow([row.author_id, row.post_id, x_clean, k, v])
-                    session.pop('_flashes', None)
-                    flash('Finish processing')
+                            f_writer.writerow(
+                                [row.author_id, row.post_id, row.reply_id, row.comment_id, row.article_type,
+                                 x_clean, k, v, row.published_time, row.id])
+                # pc.predict_file(df_raw, PATH_DOWNLOADED)
+                # DONE
+                print('time to process: {}'.format(time.time() - star_time))
+                session.pop('_flashes', None)
+                flash('Finish processing')
 
                 # Statistic
                 df_result = pd.read_csv(PATH_DOWNLOADED, delimiter='|')
@@ -219,7 +255,7 @@ def statistic_ajax():
     else:
         print('len < 0')
         status = 'id not found'
-
+        file_name_statistic_user = ''
     return flask.jsonify({
         'status': status,
         'image_name': file_name_statistic_user

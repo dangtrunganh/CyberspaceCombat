@@ -18,6 +18,34 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 #         dict_IID_to_label[row['IID']] = row['label']
 #         dict_label_to_IID[row['label']] = row['IID']
 #     return dict_label_to_IID, dict_IID_to_label
+class Interest():
+    def __init__(self, IID, id, keywords, except_keywords=[], pass_threshold=0):
+        self.IID = IID
+        self.id = id
+        self.keywords = keywords
+        self.except_keywords = except_keywords
+        self.pass_threshold = pass_threshold
+        self.df_content = None
+        self.df_post_id = None
+        self.df_reply_id = None
+        self.df_comment_id = None
+        self.df_author_id = None
+        self.df_article_type = None
+        self.df_time = None
+
+    def __str__(self):
+        str_out = {
+            'IID': self.IID,
+            'id': self.id,
+            'keywords': self.keywords,
+            'except_keywords': self.except_keywords,
+            'pass_threshold': self.pass_threshold,
+            'len df_content': len(self.df_content)
+        }
+        return str_out
+
+    def __repr__(self):
+        return self.__str__()
 
 def _read_dict_IID_label_file_single(path_dict):
     df_IID_to_label = pd.read_csv(path_dict, delimiter='|')
@@ -40,15 +68,41 @@ def _load_vectorizer(path_vectorizer):
     result_vectorizer = None
     if os.path.isfile(path_vectorizer):
         # result_vectorizer = joblib.load(path_vectorizer)
+        # result_vectorizer = pickle.load(open(path_vectorizer, 'rb'))
+        result_vectorizer = joblib.load(path_vectorizer)
+    return result_vectorizer
+
+
+def _load_bow_rule_classification(path_vectorizer):
+    print('Loading rule_classification at...{}'.format(path_vectorizer))
+    result_vectorizer = None
+    if os.path.isfile(path_vectorizer):
+        # result_vectorizer = joblib.load(path_vectorizer)
         result_vectorizer = pickle.load(open(path_vectorizer, 'rb'))
     return result_vectorizer
+
+
+def _load_tree_rule_classification(path_tree):
+    df_tree = pd.read_csv(path_tree, delimiter='|')
+    result_all_interest = []
+    for row in df_tree.itertuples():
+        keywords = [word.strip() for word in row.clean_key.split(',')]
+        if type(row.keyword_except) == str:
+            except_keywords = [word.strip() for word in row.keyword_except.split(',')]
+        else:
+            except_keywords = []
+        itr = Interest(IID=row.IID, id=row.id, keywords=keywords, except_keywords=except_keywords,
+                       pass_threshold=row.threshold_keyword)
+        result_all_interest.append(itr)
+        print('IID: %s has: %d keywords, %d except_keywords' % (itr.IID, len(itr.keywords), len(itr.except_keywords)))
+    return result_all_interest
 
 
 def _load_model(path_model):
     print('Loading app_model classification app_model...')
     if os.path.isfile(path_model):
-        # return joblib.load(path_model)
-        return pickle.load(open(path_model, 'rb'))
+        return joblib.load(path_model)
+        # return pickle.load(open(path_model, 'rb'))
     else:
         return None
 
@@ -131,7 +185,7 @@ def draw_prob_number_users(df_result, filename):
     '''
     :param df_result:
     :param filename:
-    :return: Chart in files predict - by number of posts
+    :return: Chart in files predict - by number of users
     '''
     # draw chart and save
     remove_all_files_folder(get_path_dir_fig_single_name('output_prob_user'))

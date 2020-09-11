@@ -1,5 +1,6 @@
 {
-  "model_classify": "politic_model_train.pkl",
-  "model_vectorizer": "politic_vectorizer_train.pkl"
+  "model_classify": "model_xgboost_2007.pkl",
+  "model_vectorizer": "tfidf_2007.pkl",
+  "model_bow_classify": "bow_vectorizer.pkl",
+  "max_label_each_post": 5
 }
-

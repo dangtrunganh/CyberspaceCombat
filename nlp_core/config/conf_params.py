@@ -1,5 +1,6 @@
 import json
 import os
+import pandas as pd
 
 current_dir = os.path.abspath(os.path.dirname(__file__))
 
@@ -23,17 +24,43 @@ def get_path_vectorizer():
         os.path.join(current_dir, os.pardir, 'model', 'model_vectorizer', json_content['model_vectorizer']))
 
 
+def get_path_bow_rule_classification():
+    return os.path.abspath(
+        os.path.join(current_dir, os.pardir, 'model', 'rule_classification', json_content['model_bow_classify']))
+
+
+def get_path_tree_rule_classification():
+    return os.path.abspath(
+        os.path.join(current_dir, os.pardir, 'config', 'keyword_label.csv'))
+
+
 def read_dict_IID_label():
     with open(os.path.join(current_dir, 'dict_IID_label.json'), 'r') as f_:
         dict_content = f_.read()
         return json.loads(dict_content)
 
 
+def read_dict_IID_threshold():
+    df_tree = pd.read_csv(get_path_tree_rule_classification(), delimiter='|')
+    dict_id_prob = {}
+    for row in df_tree.itertuples():
+        dict_id_prob[row.id] = row.threshold_proba
+    return dict_id_prob
+    # with open(os.path.join(current_dir, 'dict_IID_label.json'), 'r') as f_:
+    #     dict_content = f_.read()
+    #     return json.loads(dict_content)
+
+
 json_dict = read_dict_IID_label()
+dict_tree_id_threshold_proba = read_dict_IID_threshold()
 
 
 def get_label_by_IID(IID):
     return json_dict[IID]
+
+
+def get_max_label_each_post():
+    return json_content['max_label_each_post']
 
 
 def get_path_fig_output(child_last_folder, filename):

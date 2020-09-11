@@ -168,7 +168,7 @@ def __tokenize_sentence(input, keep_price, keep_dot, keep_number,
 
 def _clean_text(input, thres_hold=-1, keep_price=False, keep_dot=False, keep_number=True,
                 keep_url=False, keep_gigabyte=False, keep_email=False, keep_phone_number=False):
-    if input is not None:
+    if input is not None and type(input) == str:
         split_input = input.split(' ')
         if thres_hold != -1 and len(split_input) > thres_hold:
             input = ' '.join(split_input[:thres_hold])
@@ -176,6 +176,7 @@ def _clean_text(input, thres_hold=-1, keep_price=False, keep_dot=False, keep_num
         result = __tokenize_sentence(input, keep_price, keep_dot, keep_number,
                                      keep_url, keep_gigabyte, keep_email, keep_phone_number)
         return result
+    return ''
 
 
 def __read_stopwords(path_sw):
